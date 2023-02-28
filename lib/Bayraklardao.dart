@@ -1,5 +1,5 @@
-import 'package:flagquiz/Bayraklar.dart';
-import 'package:flagquiz/VeritabaniYardimcisi.dart';
+import 'Bayraklar.dart';
+import 'VeritabaniYardimcisi.dart';
 
 class Bayraklardao{
   Future<List<Bayraklar>?> rasgele5Getir() async{

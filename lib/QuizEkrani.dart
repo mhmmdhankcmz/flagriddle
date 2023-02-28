@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flagquiz/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
@@ -9,6 +8,7 @@ import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'Bayraklar.dart';
 import 'Bayraklardao.dart';
 import 'SonucEkrani.dart';
+import 'generated/locale_keys.g.dart';
 
 class QuizEkrani extends StatefulWidget {
 
@@ -26,6 +26,13 @@ class _QuizEkraniState extends State<QuizEkrani> {
   var yanlisSecenekler = <Bayraklar>[];
   late Bayraklar dogruSoru;
   var tumSecenekler = HashSet<Bayraklar>();
+  bool dogrumu = false;
+  bool tiklandimiSik = false;
+
+
+  Color dogru = Colors.green;
+  Color yanlis = Colors.red;
+  Color renk = Colors.blue;
 
 
   int soruSayac = 0;
@@ -37,6 +44,8 @@ class _QuizEkraniState extends State<QuizEkrani> {
   String butonByazi= "";
   String butonCyazi= "";
   String butonDyazi= "";
+
+
   @override
   void initState() {
     super.initState();
@@ -53,7 +62,6 @@ class _QuizEkraniState extends State<QuizEkrani> {
     bayrakResimAdi = dogruSoru.bayrak_resim;
 
     yanlisSecenekler = (await Bayraklardao().rasgele3YanlisGetir(dogruSoru.bayrak_id))!;
-
     tumSecenekler.clear();
     tumSecenekler.add(dogruSoru);
     tumSecenekler.add(yanlisSecenekler[0]);
@@ -68,38 +76,46 @@ class _QuizEkraniState extends State<QuizEkrani> {
     setState(() {
 
     });
+
   }
+
 
 
   Future<void> soruSayacKontrol() async{
     soruSayac = soruSayac +1;
-
     if(soruSayac != widget.gelenSoru){
       soruYukle();
     }else{
       print("Sonuç ekranına geçiş yapıldı ---------------*-*-*-*--*");
-      await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SonucEkrani(dogruSayisi: dogruSayac,soruSayisi: widget.gelenSoru)));
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SonucEkrani(dogruSayisi: dogruSayac,soruSayisi: widget.gelenSoru)));
     }
   }
 
   final player = AudioPlayer();
 
-
-
-  dogruKontrol(String buttonYazi) {
+  dogruKontrol(String buttonYazi) async{
     if(dogruSoru.bayrak_ad.tr() == buttonYazi) {
     dogruSayac = dogruSayac + 1;
-    player.play(AssetSource("audio/success.mp3"));
-
+   await player.play(AssetSource("audio/success.mp3"));
+   setState(() {
+       renk = dogru;
+       dogrumu = true;
+    });
     }else{
       player.play(AssetSource("audio/dit.mp3"));
       yanlisSayac = yanlisSayac +1;
+      setState(() {
+      renk = yanlis;
+      dogrumu = false;
+
+      });
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     if(widget.volume == false){
       player.setVolume(0.0);
       print("ses kapalı");
@@ -107,147 +123,168 @@ class _QuizEkraniState extends State<QuizEkrani> {
       player.setVolume(1.0);
       print("ses açık");
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("${LocaleKeys.flagriddle.tr()}"),
-
-        actions: [
-          LiteRollingSwitch(
-            width: 105.0,
-            value: widget.volume,
-            textOn: '${LocaleKeys.on.tr()}',textOnColor: Colors.white,
-            textOff: '${LocaleKeys.off.tr()}',textOffColor: Colors.black54,
-            colorOn: Colors.blue,
-            colorOff: Colors.blue,
-            iconOn: Icons.volume_up,
-            iconOff: Icons.volume_off,
-            animationDuration: Duration(milliseconds: 800),
-            textSize: 15,
-            onChanged: (value) {
-              setState(() {
-                widget.volume = value;
-                if(widget.volume == false){
-                  player.setVolume(0.0);
-                  print("ses kapalı");
-                }else{
-                  player.setVolume(1.0);
-                  print("ses açık");
-                }
-
-
-                print("**-*-*-*-*-*-*-*- ${widget.volume}");
-              });
-            }, onTap: (){}, onDoubleTap: (){}, onSwipe:(){},
-          ),
-        ],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-              filterQuality: FilterQuality.high,
-                image: AssetImage("assets/buton/background.jpg"),
-                fit: BoxFit.cover)),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children:  [
-                      Text("${LocaleKeys.right.tr()}  :$dogruSayac ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.green),),
-                      Text("${LocaleKeys.wrong.tr()} : $yanlisSayac ",style: TextStyle(fontSize: 20,color: Colors.red),),
-                    ],
-                  ),
-                ),
-
-                soruSayac != widget.gelenSoru ? Text("${soruSayac+1}. ${LocaleKeys.question.tr()} ",style: TextStyle(fontSize: 30),):
-                Text("  ",style: TextStyle(fontSize: 30),),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(35,0,0,0),
-                        child: Text("${widget.gelenSoru} ${LocaleKeys.questionbeasked.tr()}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold),),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("${LocaleKeys.flagriddle.tr()}"),
+          actions: [
+            buildLiteRollingSwitch(),
+          ],
+        ),
+        body: Container(height: screenHeight,width: screenWidth,
+          decoration: buildBoxDecoration(),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildPadding(),
+                    soruSayac != widget.gelenSoru ? Text("${soruSayac+1}. ${LocaleKeys.question.tr()} ",style: TextStyle(fontSize: 30),):
+                    Text("  ",style: TextStyle(fontSize: 30),),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(35,0,0,0),
+                            child: Text("${widget.gelenSoru} ${LocaleKeys.questionbeasked.tr()}",style: TextStyle(fontSize: screenWidth/30,fontWeight: FontWeight.bold),),
+                          ),
+                          dogrumu ? Visibility(visible : tiklandimiSik,child: Icon(Icons.check_rounded,color: dogru,size: screenWidth/4.toDouble(),)) : Visibility(visible : tiklandimiSik,child:Icon(Icons.cancel_outlined,color: yanlis,size:screenWidth/4.toDouble() ) ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0,0,35,0),
+                            child: Text("${LocaleKeys.remaining.tr()} ${widget.gelenSoru - soruSayac}",style: TextStyle(fontSize: screenWidth/30,fontWeight: FontWeight.bold),),
+                          ),
+                        ],
                       ),
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0,0,35,0),
-                        child: Text("${LocaleKeys.remaining.tr()} ${widget.gelenSoru - soruSayac}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold),),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(elevation:25,child: Image.asset("resimler/$bayrakResimAdi")),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(height: 50,width:250, child: ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0))),
-                      ),
-                      onPressed: (){
-                    dogruKontrol(butonAyazi);
-                    soruSayacKontrol();
-                  }, child: Text(butonAyazi))),
-                ),
+                    Card(elevation:25,child: Image.asset("resimler/$bayrakResimAdi")),
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(height: 50,width:250, child: ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0))),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(height: 50,width:250, child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor:Colors.lightBlue,),
+                          onPressed: () async{
+                           await Future.delayed(Duration(milliseconds: 200));
+                            setState(() {
+                              tiklandimiSik= true;
+                              print("A şıkkı $tiklandimiSik");
+                            });
+                            dogruKontrol(butonAyazi);
+                            soruSayacKontrol();
+                      }, child: Text(butonAyazi)
+                      )
                       ),
-                      onPressed: (){
-                    dogruKontrol(butonByazi);
-                    soruSayacKontrol();
-                  }, child: Text(butonByazi))),
-                ),
+                    ),
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(height: 50,width:250, child: ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0))),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(height: 50,width:250, child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue,
                       ),
-                      onPressed: (){
-                    dogruKontrol(butonCyazi);
-                    soruSayacKontrol();
-                  }, child: Text(butonCyazi))),
-                ),
+                          onPressed: () async{
+                            await Future.delayed(Duration(milliseconds: 200));
+                            setState(() {
+                              tiklandimiSik= true;
+                              print("B şıkkı $tiklandimiSik");
+                            });
+                             dogruKontrol(butonByazi);
+                             soruSayacKontrol();
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(height: 50,width:250, child: ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0))),
-                      ),
-                      onPressed: (){
-                    dogruKontrol(butonDyazi);
-                    soruSayacKontrol();
-                  }, child: Text(butonDyazi))),
-                ),
+                      }, child: Text(butonByazi))),
+                    ),
 
-              ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(height: 50,width:250, child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue,),
+                          onPressed: ()async{
+                            await Future.delayed(Duration(milliseconds: 200));
+                            setState(() {
+                              tiklandimiSik= true;
+                              print("C şıkkı $tiklandimiSik");
+                            });
+                            dogruKontrol(butonCyazi);
+                            soruSayacKontrol();
+                      }, child: Text(butonCyazi))),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(height: 50,width:250, child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue,),
+                          onPressed: ()async{
+                            await Future.delayed(Duration(milliseconds: 200));
+                            setState(() {
+                              tiklandimiSik= true;
+                              print("D şıkkı $tiklandimiSik");
+                            });
+                        dogruKontrol(butonDyazi);
+                        soruSayacKontrol();
+                      }, child: Text(butonDyazi))),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+
+  Padding buildPadding() {
+    return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children:  [
+                    Text("${LocaleKeys.right.tr()}  :$dogruSayac ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.green),),
+                    Text("${LocaleKeys.wrong.tr()} : $yanlisSayac ",style: TextStyle(fontSize: 20,color: Colors.red),),
+                  ],
+                ),
+              );
+  }
+
+  BoxDecoration buildBoxDecoration() {
+    return BoxDecoration(
+          image: DecorationImage(
+            filterQuality: FilterQuality.high,
+              image: AssetImage("assets/buton/background.jpg"),
+              fit: BoxFit.cover));
+  }
+
+  LiteRollingSwitch buildLiteRollingSwitch() {
+    return LiteRollingSwitch(
+          width: 105.0,
+          value: widget.volume,
+          textOn: '${LocaleKeys.on.tr()}',textOnColor: Colors.white,
+          textOff: '${LocaleKeys.off.tr()}',textOffColor: Colors.black54,
+          colorOn: Colors.blue,
+          colorOff: Colors.blue,
+          iconOn: Icons.volume_up,
+          iconOff: Icons.volume_off,
+          animationDuration: Duration(milliseconds: 800),
+          textSize: 15,
+          onChanged: (value) {
+            setState(() {
+              widget.volume = value;
+              if(widget.volume == false){
+                player.setVolume(0.0);
+                print("ses kapalı");
+              }else{
+                player.setVolume(1.0);
+                print("ses açık");
+              }
+
+              print("**-*-*-*-*-*-*-*- ${widget.volume}");
+            });
+          }, onTap: (){}, onDoubleTap: (){}, onSwipe:(){},
+        );
   }
 }
