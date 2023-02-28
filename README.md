@@ -1,16 +1,10 @@
-# flagquiz
+# Flag Riddle
 
-FlagQuiz
+Bayrak Bilmece Oyunu
 
-## Getting Started
+![FlagRiddleIcon](https://user-images.githubusercontent.com/95185241/221915711-19b1b5c8-aabc-4802-a8f6-b9755ae214c4.png)
+![qrcode_play google com](https://user-images.githubusercontent.com/95185241/221916008-bf1e0852-36b1-448d-8851-8ba1196e0c90.png)
+![3](https://user-images.githubusercontent.com/95185241/221915647-30d88a9b-a07e-4003-b01c-05a1587d4b59.png)
+![5](https://user-images.githubusercontent.com/95185241/221915577-b9e4cea5-1030-4972-b625-c23c76325e11.png)
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
