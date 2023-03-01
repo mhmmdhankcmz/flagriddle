@@ -5,10 +5,14 @@ abstract class  LocaleKeys {
   static const on = 'on';
   static const off = 'off';
   static const noq = 'noq';
+  static const app = 'app';
   static const numberenter = 'numberenter';
   static const welcomeflaggame = 'welcomeflaggame';
   static const questionbeasked = 'questionbeasked';
   static const remaining = 'remaining';
+  static const exit = 'do you want to exit the FlagRiddle?';
+  static const yes = 'yes';
+  static const no = 'no';
   static const flaggame = 'flaggame';
   static const flagriddle = 'flagriddle';
   static const question = 'question';

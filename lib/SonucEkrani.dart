@@ -29,6 +29,7 @@ class _SonucEkraniState extends State<SonucEkrani> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     print(
         "${widget.soruSayisi}--------------------------------------------------*0-*0-0-0-*0-*0");
     return Screenshot(
@@ -39,7 +40,7 @@ class _SonucEkraniState extends State<SonucEkrani> {
             title:
                 Text("${LocaleKeys.score.tr()}  ${LocaleKeys.flagriddle.tr()}"),
           ),
-          body: Container(
+          body: Container(width: size.width,height: size.height,
             decoration: BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage("assets/buton/background.jpg"),

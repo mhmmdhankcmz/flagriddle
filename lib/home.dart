@@ -41,49 +41,8 @@ class _HomeState extends State<Home> {
                 fontWeight: FontWeight.bold),
           ),
           actions: [
-            LiteRollingSwitch(
-              width: 105.0,
-              value: true,
-              textOn: '${LocaleKeys.on.tr()}',
-              textOnColor: Colors.white,
-              textOff: '${LocaleKeys.off.tr()}',
-              textOffColor: Colors.black45,
-              colorOn: Colors.blue,
-              colorOff: Colors.blue,
-              iconOn: Icons.volume_up,
-              iconOff: Icons.volume_off,
-              animationDuration: Duration(milliseconds: 800),
-              textSize: 14,
-              onChanged: (value) {
-                setState(() {
-                  _volume = value;
-                  soundOff();
-                });
-              },
-              onTap: () {},
-              onDoubleTap: () {},
-              onSwipe: () {},
-            ),
-            PopupMenuButton(
-                icon: const Icon(Icons.language_rounded),
-                itemBuilder: (context) => [
-                      PopupMenuItem(
-                          child: Text("English"),
-                          onTap: () {
-                            setState(() {
-                              EasyLocalization.of(context)!
-                                  .setLocale(Locale("en"));
-                            });
-                          }),
-                      PopupMenuItem(
-                          child: Text("Türkçe"),
-                          onTap: () {
-                            setState(() {
-                              EasyLocalization.of(context)!
-                                  .setLocale(Locale("tr"));
-                            });
-                          })
-                    ])
+            buildLiteRollingSwitch(),
+            buildPopupMenuButton()
           ],
         ),
         body: WillPopScope(
@@ -101,26 +60,8 @@ class _HomeState extends State<Home> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(
-                        width: 300,
-                        child: Text(
-                          "${LocaleKeys.flaggame.tr()}",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              color: (Colors.blue)),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.all(40.0),
-                      child: SvgPicture.asset(
-                        "assets/buton/world.svg",
-                        placeholderBuilder: (context) =>
-                            CircularProgressIndicator(),
-                        height: 250.0,
-                        width: 250.0,
-                      ),
-                    ),
+                    buildSizedBox(),
+                    buildPadding(),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -234,6 +175,81 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Padding buildPadding() {
+    return Padding(
+                    padding: const EdgeInsets.all(40.0),
+                    child: SvgPicture.asset(
+                      "assets/buton/world.svg",
+                      placeholderBuilder: (context) =>
+                          CircularProgressIndicator(),
+                      height: 250.0,
+                      width: 250.0,
+                    ),
+                  );
+  }
+
+  SizedBox buildSizedBox() {
+    return SizedBox(
+                      width: 300,
+                      child: Text(
+                        "${LocaleKeys.flaggame.tr()}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: (Colors.blue)),
+                      ));
+  }
+
+  PopupMenuButton<dynamic> buildPopupMenuButton() {
+    return PopupMenuButton(
+              icon: const Icon(Icons.language_rounded),
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                        child: Text("English"),
+                        onTap: () {
+                          setState(() {
+                            EasyLocalization.of(context)!
+                                .setLocale(Locale("en"));
+                          });
+                        }),
+                    PopupMenuItem(
+                        child: Text("Türkçe"),
+                        onTap: () {
+                          setState(() {
+                            EasyLocalization.of(context)!
+                                .setLocale(Locale("tr"));
+                          });
+                        })
+                  ]);
+  }
+
+  LiteRollingSwitch buildLiteRollingSwitch() {
+    return LiteRollingSwitch(
+            width: 105.0,
+            value: true,
+            textOn: '${LocaleKeys.on.tr()}',
+            textOnColor: Colors.white,
+            textOff: '${LocaleKeys.off.tr()}',
+            textOffColor: Colors.black45,
+            colorOn: Colors.blue,
+            colorOff: Colors.blue,
+            iconOn: Icons.volume_up,
+            iconOff: Icons.volume_off,
+            animationDuration: Duration(milliseconds: 800),
+            textSize: 14,
+            onChanged: (value) {
+              setState(() {
+                _volume = value;
+                soundOff();
+              });
+            },
+            onTap: () {},
+            onDoubleTap: () {},
+            onSwipe: () {},
+          );
+  }
+
   Future<bool> shotDownApp() async {
     await exit(0);
   }
@@ -241,12 +257,12 @@ class _HomeState extends State<Home> {
   Future<bool?> showMyDialog() => showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-            title: Text("Do you want to exit the FlagRiddle?"),
+            title: Text("${LocaleKeys.exit.tr()}"),
             actions: [
               TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text('CANCEL')),
-              TextButton(onPressed: () => shotDownApp(), child: Text('YES')),
+                  child: Text(LocaleKeys.no)),
+              TextButton(onPressed: () => shotDownApp(), child: Text(LocaleKeys.yes)),
             ],
           ));
 }

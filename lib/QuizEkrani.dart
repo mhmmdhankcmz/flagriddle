@@ -245,7 +245,7 @@ class _QuizEkraniState extends State<QuizEkrani> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children:  [
                     Text("${LocaleKeys.right.tr()}  :$dogruSayac ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.green),),
-                    Text("${LocaleKeys.wrong.tr()} : $yanlisSayac ",style: TextStyle(fontSize: 20,color: Colors.red),),
+                    Text("${LocaleKeys.wrong.tr()} : $yanlisSayac ",style: TextStyle(fontSize: 20,color: Colors.red.shade600,fontWeight: FontWeight.bold),),
                   ],
                 ),
               );
