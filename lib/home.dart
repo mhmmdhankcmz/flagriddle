@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'QuizEkrani.dart';
-import 'generated/locale_keys.g.dart';
+
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -33,8 +33,10 @@ class _HomeState extends State<Home> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
+          backgroundColor: AppBarTheme.of(context).backgroundColor,
           title: Text(
-            '${LocaleKeys.welcomeflaggame.tr()}',
+            'welcomeflaggame'.tr,
             style: TextStyle(
                 fontSize: 16,
                 fontStyle: FontStyle.italic,
@@ -74,6 +76,7 @@ class _HomeState extends State<Home> {
                         child: Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: DropdownButton<int>(
+                            dropdownColor: Colors.lightBlueAccent.shade100,
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -88,21 +91,22 @@ class _HomeState extends State<Home> {
                               size: 30,
                               color: Colors.white,
                             ),
-                            hint: Text(
-                              "${LocaleKeys.hmqwyl.tr()}  ${_selectedItem} ",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                            ),
+                            hint: RichText(text: TextSpan(text: "hmqwyl".tr,style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold) ,children: [TextSpan(text:" ${_selectedItem}",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold))])),
+                            // hint: Text(
+                            //   "hmqwyl  ${_selectedItem}".tr ,
+                            //   style: TextStyle(
+                            //       fontSize: 16,
+                            //       fontWeight: FontWeight.bold,
+                            //       color: Colors.black),
+                            // ),
                             focusColor: Colors.blue,
                             items: <int>[10, 15, 20, 25, 30, 35, 40, 45, 50]
                                 .map((int value) {
                               return DropdownMenuItem<int>(
                                 alignment: Alignment.center,
                                 value: value,
-                                child: Text(
-                                  value.toString(),
+
+                                child: Text("${value.toString()} Soru Sor",
                                   style:
                                       TextStyle(fontSize: 20, color: Colors.blue),
                                 ),
@@ -122,6 +126,7 @@ class _HomeState extends State<Home> {
                       width: 300, height: 50,
                       child: ElevatedButton(
                         style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.all(Colors.blue.shade400),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
@@ -129,36 +134,31 @@ class _HomeState extends State<Home> {
                         ),
                         onPressed: () async {
                           await player.play(AssetSource("audio/beep.mp3"));
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => QuizEkrani(
-                                        gelenSoru: _selectedItem,
-                                        volume: _volume,
-                                      )));
+                          Get.offAll(QuizEkrani(gelenSoru: _selectedItem, volume: _volume));
+
                           print(
-                              "******************ses durumu $_volume**************");
+                              "*ses durumu $_volume**************");
                         },
                         child: Text(
-                          "${LocaleKeys.start.tr()}",
+                          'start'.tr,
                           style: TextStyle(fontSize: 30),
                         ),
                       ),
                     ),
                     TextButton(
                       onPressed: () {
-                        EasyLocalization.of(context)!
-                            .setLocale(const Locale("en"));
+                        // setState(() {
+                        //   EasyLocalization.of(context)!
+                        //       .setLocale(const Locale("en"));
+                        // });
+                          Get.updateLocale(const Locale('en','US'));
                       },
-                      child: const Text(
-                        "ENGLISH",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
+                      child: const Text("ENGLISH", style: TextStyle(color: Colors.white, fontSize: 16),),
                     ),
                     TextButton(
                       onPressed: () {
-                        EasyLocalization.of(context)!
-                            .setLocale(const Locale("tr"));
+                          Get.updateLocale(const Locale('tr','TR'));
+                          // EasyLocalization.of(context)!.setLocale(const Locale("tr"));
                       },
                       child: const Text(
                         "TÜRKÇE",
@@ -178,10 +178,8 @@ class _HomeState extends State<Home> {
   Padding buildPadding() {
     return Padding(
                     padding: const EdgeInsets.all(40.0),
-                    child: SvgPicture.asset(
-                      "assets/buton/world.svg",
-                      placeholderBuilder: (context) =>
-                          CircularProgressIndicator(),
+                    child: Image.asset(
+                      "assets/buton/logo.png",
                       height: 250.0,
                       width: 250.0,
                     ),
@@ -192,7 +190,7 @@ class _HomeState extends State<Home> {
     return SizedBox(
                       width: 300,
                       child: Text(
-                        "${LocaleKeys.flaggame.tr()}",
+                        "flaggame".tr,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 30,
@@ -208,35 +206,29 @@ class _HomeState extends State<Home> {
                     PopupMenuItem(
                         child: Text("English"),
                         onTap: () {
-                          setState(() {
-                            EasyLocalization.of(context)!
-                                .setLocale(Locale("en"));
-                          });
+                         Get.updateLocale(const Locale('en','US'));
                         }),
                     PopupMenuItem(
                         child: Text("Türkçe"),
                         onTap: () {
-                          setState(() {
-                            EasyLocalization.of(context)!
-                                .setLocale(Locale("tr"));
-                          });
+                          Get.updateLocale(const Locale('tr','TR'));
                         })
                   ]);
   }
 
   LiteRollingSwitch buildLiteRollingSwitch() {
     return LiteRollingSwitch(
-            width: 105.0,
+            width: 100.0,
             value: true,
-            textOn: '${LocaleKeys.on.tr()}',
+            textOn: 'on'.tr,
             textOnColor: Colors.white,
-            textOff: '${LocaleKeys.off.tr()}',
+            textOff: 'off'.tr,
             textOffColor: Colors.black45,
             colorOn: Colors.blue,
             colorOff: Colors.blue,
             iconOn: Icons.volume_up,
             iconOff: Icons.volume_off,
-            animationDuration: Duration(milliseconds: 800),
+            animationDuration: Duration(milliseconds: 700),
             textSize: 14,
             onChanged: (value) {
               setState(() {
@@ -256,13 +248,13 @@ class _HomeState extends State<Home> {
 
   Future<bool?> showMyDialog() => showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-            title: Text("${LocaleKeys.exit.tr()}"),
+      builder: (context) => CupertinoAlertDialog(
+            title: Text("exit".tr),
             actions: [
               TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text(LocaleKeys.no)),
-              TextButton(onPressed: () => shotDownApp(), child: Text(LocaleKeys.yes)),
+                  child: Text("no".tr)),
+              TextButton(onPressed: () =>shotDownApp(), child: Text("yes".tr)),
             ],
           ));
 }

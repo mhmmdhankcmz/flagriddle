@@ -1,15 +1,16 @@
 import 'dart:collection';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart' ;
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
 
 import 'Bayraklar.dart';
 import 'Bayraklardao.dart';
 import 'SonucEkrani.dart';
-import 'generated/locale_keys.g.dart';
 
+
+// ignore: must_be_immutable
 class QuizEkrani extends StatefulWidget {
 
  late int gelenSoru ;
@@ -68,10 +69,10 @@ class _QuizEkraniState extends State<QuizEkrani> {
     tumSecenekler.add(yanlisSecenekler[1]);
     tumSecenekler.add(yanlisSecenekler[2]);
 
-    butonAyazi = tumSecenekler.elementAt(0).bayrak_ad.tr();
-    butonByazi = tumSecenekler.elementAt(1).bayrak_ad.tr();
-    butonCyazi = tumSecenekler.elementAt(2).bayrak_ad.tr();
-    butonDyazi = tumSecenekler.elementAt(3).bayrak_ad.tr();
+    butonAyazi = tumSecenekler.elementAt(0).bayrak_ad;
+    butonByazi = tumSecenekler.elementAt(1).bayrak_ad;
+    butonCyazi = tumSecenekler.elementAt(2).bayrak_ad;
+    butonDyazi = tumSecenekler.elementAt(3).bayrak_ad;
 
     setState(() {
 
@@ -87,14 +88,15 @@ class _QuizEkraniState extends State<QuizEkrani> {
       soruYukle();
     }else{
       print("Sonuç ekranına geçiş yapıldı ---------------*-*-*-*--*");
-       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SonucEkrani(dogruSayisi: dogruSayac,soruSayisi: widget.gelenSoru)));
+      Get.offAll(SonucEkrani(soruSayisi:widget.gelenSoru , dogruSayisi: dogruSayac),transition: Transition.cupertino);
+       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SonucEkrani(dogruSayisi: dogruSayac,soruSayisi: widget.gelenSoru)));
     }
   }
 
   final player = AudioPlayer();
 
   dogruKontrol(String buttonYazi) async{
-    if(dogruSoru.bayrak_ad.tr() == buttonYazi) {
+    if(dogruSoru.bayrak_ad == buttonYazi) {
     dogruSayac = dogruSayac + 1;
    await player.play(AssetSource("audio/success.mp3"));
    setState(() {
@@ -115,7 +117,7 @@ class _QuizEkraniState extends State<QuizEkrani> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.of(context).size.height ;
     if(widget.volume == false){
       player.setVolume(0.0);
       print("ses kapalı");
@@ -126,12 +128,13 @@ class _QuizEkraniState extends State<QuizEkrani> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("${LocaleKeys.flagriddle.tr()}"),
+          backgroundColor: AppBarTheme.of(context).backgroundColor,
+          title: Text("flagriddle".tr),
           actions: [
             buildLiteRollingSwitch(),
           ],
         ),
-        body: Container(height: screenHeight,width: screenWidth,
+        body: Container(height: screenHeight-10,width: screenWidth,
           decoration: buildBoxDecoration(),
           child: Center(
             child: SingleChildScrollView(
@@ -141,7 +144,8 @@ class _QuizEkraniState extends State<QuizEkrani> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     buildPadding(),
-                    soruSayac != widget.gelenSoru ? Text("${soruSayac+1}. ${LocaleKeys.question.tr()} ",style: TextStyle(fontSize: 30),):
+                    soruSayac != widget.gelenSoru ? RichText(text: TextSpan(text: "${soruSayac+1}. ",style: TextStyle(fontSize: 30,color: Colors.black),children: [TextSpan(text: "question".tr)]),):
+                    // soruSayac != widget.gelenSoru ? Text("${soruSayac+1}. question".tr,style: TextStyle(fontSize: 30),):
                     Text("  ",style: TextStyle(fontSize: 30),),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -150,13 +154,14 @@ class _QuizEkraniState extends State<QuizEkrani> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(35,0,0,0),
-                            child: Text("${widget.gelenSoru} ${LocaleKeys.questionbeasked.tr()}",style: TextStyle(fontSize: screenWidth/30,fontWeight: FontWeight.bold),),
+                            padding: const EdgeInsets.fromLTRB(30,0,0,0),
+                            child: RichText(text: TextSpan(text: "${widget.gelenSoru} ",style: TextStyle(fontSize: screenWidth/30,fontWeight: FontWeight.bold,color: Colors.green.shade300),children: [TextSpan(text: "questionbeasked".tr,)])),
+
                           ),
-                          dogrumu ? Visibility(visible : tiklandimiSik,child: Icon(Icons.check_rounded,color: dogru,size: screenWidth/4.toDouble(),)) : Visibility(visible : tiklandimiSik,child:Icon(Icons.cancel_outlined,color: yanlis,size:screenWidth/4.toDouble() ) ),
+                          dogrumu ? Visibility(visible : tiklandimiSik,child: Icon(Icons.check_rounded,color: dogru,size: screenWidth/5.toDouble(),)) : Visibility(visible : tiklandimiSik,child:Icon(Icons.cancel_outlined,color: yanlis,size:screenWidth/5.toDouble() ) ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0,0,35,0),
-                            child: Text("${LocaleKeys.remaining.tr()} ${widget.gelenSoru - soruSayac}",style: TextStyle(fontSize: screenWidth/30,fontWeight: FontWeight.bold),),
+                            padding: const EdgeInsets.fromLTRB(5,0,30,0),
+                            child: RichText(text: TextSpan(text: "remaining".tr,style: TextStyle(fontWeight: FontWeight.bold,fontSize: screenWidth/30,color: Colors.black),children: [TextSpan(text: " ${widget.gelenSoru - soruSayac}",style: TextStyle(color: Colors.red,fontSize: screenWidth/30))])),
                           ),
                         ],
                       ),
@@ -165,7 +170,7 @@ class _QuizEkraniState extends State<QuizEkrani> {
                     Card(elevation:25,child: Image.asset("resimler/$bayrakResimAdi")),
 
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(5.0),
                       child: SizedBox(height: 50,width:250, child: ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor:Colors.lightBlue,),
                           onPressed: () async{
@@ -176,13 +181,13 @@ class _QuizEkraniState extends State<QuizEkrani> {
                             });
                             dogruKontrol(butonAyazi);
                             soruSayacKontrol();
-                      }, child: Text(butonAyazi)
+                      }, child: Text(butonAyazi.tr)
                       )
                       ),
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(5.0),
                       child: SizedBox(height: 50,width:250, child: ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue,
                       ),
@@ -195,11 +200,11 @@ class _QuizEkraniState extends State<QuizEkrani> {
                              dogruKontrol(butonByazi);
                              soruSayacKontrol();
 
-                      }, child: Text(butonByazi))),
+                      }, child: Text(butonByazi.tr))),
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(5.0),
                       child: SizedBox(height: 50,width:250, child: ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue,),
                           onPressed: ()async{
@@ -210,11 +215,11 @@ class _QuizEkraniState extends State<QuizEkrani> {
                             });
                             dogruKontrol(butonCyazi);
                             soruSayacKontrol();
-                      }, child: Text(butonCyazi))),
+                      }, child: Text(butonCyazi.tr))),
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(5.0),
                       child: SizedBox(height: 50,width:250, child: ElevatedButton(
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue,),
                           onPressed: ()async{
@@ -225,7 +230,7 @@ class _QuizEkraniState extends State<QuizEkrani> {
                             });
                         dogruKontrol(butonDyazi);
                         soruSayacKontrol();
-                      }, child: Text(butonDyazi))),
+                      }, child: Text(butonDyazi.tr))),
                     ),
                   ],
                 ),
@@ -240,12 +245,12 @@ class _QuizEkraniState extends State<QuizEkrani> {
 
   Padding buildPadding() {
     return Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(5.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children:  [
-                    Text("${LocaleKeys.right.tr()}  :$dogruSayac ",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.green),),
-                    Text("${LocaleKeys.wrong.tr()} : $yanlisSayac ",style: TextStyle(fontSize: 20,color: Colors.red.shade600,fontWeight: FontWeight.bold),),
+                    RichText(text: TextSpan(text: "right".tr,style:TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.green),children: [TextSpan(text: " $dogruSayac")])),
+                    RichText(text: TextSpan(text: "wrong".tr,style:TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.red.shade600),children: [TextSpan(text: " $yanlisSayac")])),
                   ],
                 ),
               );
@@ -263,8 +268,8 @@ class _QuizEkraniState extends State<QuizEkrani> {
     return LiteRollingSwitch(
           width: 105.0,
           value: widget.volume,
-          textOn: '${LocaleKeys.on.tr()}',textOnColor: Colors.white,
-          textOff: '${LocaleKeys.off.tr()}',textOffColor: Colors.black54,
+          textOn: 'on'.tr,textOnColor: Colors.white,
+          textOff: 'off'.tr,textOffColor: Colors.black54,
           colorOn: Colors.blue,
           colorOff: Colors.blue,
           iconOn: Icons.volume_up,

@@ -1,36 +1,35 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:FlagRiddle/translate/languages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import 'home.dart';
 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
-  runApp(
-    EasyLocalization(
-        child: MyApp(),
-        fallbackLocale: const Locale('tr'),
-        supportedLocales: const [Locale('tr'), Locale('en')],
-        saveLocale: true,
-        path: 'assets/translations'),
 
-  );
+  runApp( MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+
+      translations: Languages(),
       title: 'Flag Game',
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
+      locale: Get.deviceLocale,
+      fallbackLocale: Locale('tr','TR'),
       theme: ThemeData(
+        useMaterial3: true,
         primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+
+            color: Colors.lightBlue.shade300)
       ),
       home: MyHomePage(),
     );
@@ -49,21 +48,32 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    Future.delayed(Duration(milliseconds: 500), () {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+
+    Future.delayed(Duration(seconds: 2), () {
+     Get.to(()=>Home());
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
-          decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage("assets/buton/background.jpg"),
-            fit: BoxFit.cover),
-      )),
+      body: Stack(children: [
+           Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("assets/buton/background.jpg"),
+                    fit: BoxFit.cover),
+              )),
+        Center(
+          child: Container(width: width/2,height: width,
+              foregroundDecoration: BoxDecoration(image: DecorationImage(image: AssetImage("assets/buton/logo.png"))),
+
+        ),),
+      ],
+
+      ),
     );
   }
 }

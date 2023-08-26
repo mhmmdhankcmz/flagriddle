@@ -1,17 +1,19 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:FlagRiddle/home.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'generated/locale_keys.g.dart';
 
+// ignore: must_be_immutable
 class SonucEkrani extends StatefulWidget{
   late int dogruSayisi;
   late int soruSayisi;
+
 
   SonucEkrani({required this.soruSayisi, required this.dogruSayisi});
 
@@ -22,9 +24,8 @@ class SonucEkrani extends StatefulWidget{
 class _SonucEkraniState extends State<SonucEkrani> {
   ScreenshotController screenshotController = ScreenshotController();
 
-  void initState() {
-    super.initState();
-  }
+
+
 
 
   @override
@@ -37,8 +38,9 @@ class _SonucEkraniState extends State<SonucEkrani> {
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: AppBarTheme.of(context).backgroundColor,
             title:
-                Text("${LocaleKeys.score.tr()}  ${LocaleKeys.flagriddle.tr()}"),
+                Text("riddleScore".tr),
           ),
           body: Container(width: size.width,height: size.height,
             decoration: BoxDecoration(
@@ -53,39 +55,45 @@ class _SonucEkraniState extends State<SonucEkrani> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+
                           Padding(
                             padding: const EdgeInsets.fromLTRB(35, 0, 0, 60),
-                            child: Text(
-                              "${widget.dogruSayisi}  ${LocaleKeys.right.tr()} ",
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left,
-                            ),
+                            child:  RichText(text: TextSpan(text: "${widget.dogruSayisi} ",style:TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.green),children: [TextSpan(text: "right".tr)])),
+                            // child: Text(
+                            //   "${widget.dogruSayisi} right".tr,
+                            //   style: TextStyle(
+                            //       color: Colors.green,
+                            //       fontSize: 25,
+                            //       fontWeight: FontWeight.bold),
+                            //   textAlign: TextAlign.left,
+                            // ),
                           ),
+                         // Padding(
+                         //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 60),
+                         //   child: Align(alignment: AlignmentDirectional.bottomEnd,child: Container(width: 50,height:50,child: Icon(Icons.compare_arrows_sharp))),
+                         // ),/* burda kaldım*/
                           Spacer(),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 35, 60),
-                            child: Text(
-                              " ${widget.soruSayisi - widget.dogruSayisi}  ${LocaleKeys.wrong.tr()}",
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                            child:  RichText(text: TextSpan(text: "${widget.soruSayisi-widget.dogruSayisi} ",style:TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.red),children: [TextSpan(text: "wrong".tr)])),
+                            // child: Text(
+                            //   " ${widget.soruSayisi-widget.dogruSayisi} wrong".tr,
+                            //
+                            //   style: TextStyle(
+                            //       color: Colors.red,
+                            //       fontSize: 25,
+                            //       fontWeight: FontWeight.bold),
+                            // ),
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 0, 40, 60),
-                      child: Text(
-                        "% ${widget.dogruSayisi * 100 ~/ widget.soruSayisi} ${LocaleKeys.successRate.tr()}",
-                        style: TextStyle(fontSize: 35, color: Colors.black),
-                      ),
+                      padding:  EdgeInsets.fromLTRB(30, 0, 30, 60),
+                      child: RichText(text: TextSpan(text: "% ${widget.dogruSayisi * 100 ~/ widget.soruSayisi} ",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold,color: Colors.blueGrey.shade800),children:[TextSpan(text: "successRate".tr,)])),
+
                     ),
                     Padding(
                       padding: const EdgeInsets.all(50.0),
@@ -101,9 +109,11 @@ class _SonucEkraniState extends State<SonucEkrani> {
                                             BorderRadius.circular(25.0))),
                               ),
                               onPressed: () {
-                                Navigator.pop(context);
+                                Get.offAll(Home());
+                                // Navigator.pop(context);
                               },
-                              child: Text(LocaleKeys.playAgain.tr()))),
+                              child: Text("playAgain".tr)
+                          )),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(50.0),
@@ -127,10 +137,10 @@ class _SonucEkraniState extends State<SonucEkrani> {
                               saveAndShare(image);
                             },
                             label: Text(
-                              "${LocaleKeys.share.tr()}",
+                              "share".tr,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
+                                  fontWeight: FontWeight.bold, fontSize: 13),
                             ),
                           )),
                     ),
