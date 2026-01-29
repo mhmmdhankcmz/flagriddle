@@ -17,44 +17,49 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.2.0+9
+version: 1.3.0+10
 
 environment:
-  sdk: '>=2.18.1 <3.0.0'
+  sdk: '>=3.7.0 <4.0.0'
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
     sdk: flutter
-  path:
-  sqflite:
-  audioplayers: ^5.1.0
-  lite_rolling_switch:
-  screenshot: ^2.1.0
-  image_gallery_saver:
-  permission_handler:
-  share_plus:
-  path_provider:
-  cross_file:
-  get: ^4.6.5
-  flutter_native_splash: ^2.3.2
 
+  # State management & navigation
+  get: ^4.7.3
 
+  # Database
+  sqflite: ^2.4.2
+  path: ^1.9.0
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  # Audio
+  audioplayers: ^6.5.1
+
+  # UI Components
+  lite_rolling_switch: ^1.0.1
+  cupertino_icons: ^1.0.8
+
+  # Screenshot & Sharing
+  screenshot: ^3.0.0
+  share_plus: ^12.0.1
+  image_gallery_saver: ^2.0.3
+
+  # Permissions & Storage
+  permission_handler: ^12.0.1
+  path_provider: ^2.1.5
+
+  # Splash Screen
+  flutter_native_splash: ^2.4.7
+
+  # Local Storage for scores
+  shared_preferences: ^2.3.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  flutter_native_splash: ^2.3.2
+  flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.7
 flutter_native_splash:
   background_image: assets/buton/background.jpg
   image: assets/buton/logo.png
