@@ -10,8 +10,8 @@ class VeritabaniYardimcisi{
   static Future<Database> veritabaniErisim() async {
     String veritabaniYolu = join(await getDatabasesPath(), veritabaniAdi);
 
-    if(await databaseExists(veritabaniYolu)){//Veritabanı var mı yok mu kontrolü
-      print("Veri tabanı zaten var.Kopyalamaya gerek yok");
+    if(await databaseExists(veritabaniYolu)){
+      // Veritabanı zaten mevcut
     }else{
       //assetten veritabanının alınması
       ByteData data = await rootBundle.load("veritabani/$veritabaniAdi");
@@ -19,7 +19,6 @@ class VeritabaniYardimcisi{
       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       //Veritabanının kopyalanması.
       await File(veritabaniYolu).writeAsBytes(bytes,flush: true);
-      print("Veri tabanı kopyalandı");
     }
     //Veritabanını açıyoruz.
     return openDatabase(veritabaniYolu);
